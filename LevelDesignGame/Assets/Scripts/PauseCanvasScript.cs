@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class PauseCanvasScript : MonoBehaviour {
     bool added = false;
@@ -8,15 +9,36 @@ public class PauseCanvasScript : MonoBehaviour {
     public GameObject startText;
     public GameObject deathText;
     float timer;
+    public GameObject levelFinishObject;
+
+    public Text timeText;
+    public Text deathsText;
+    public Text coinsText;
+
 	// Use this for initialization
 	void Start () {
-        if (GameLogic.instance != null) {
-            GameLogic.instance.pauseCanvas = this;
-            added = true;
-        }
+        //if (GameLogic.instance != null) {
+        //    GameLogic.instance.pauseCanvas = this;
+        //    added = true;
+        //}
         gris.SetActive(false);
+        levelFinishObject.SetActive(false);
 	}
 	
+    public void ActivateFinishScreen() {
+        if (!levelFinishObject.activeInHierarchy) {
+            GameLogic.instance.savedCoins += GameLogic.instance.coinsGrabbed;
+            levelFinishObject.SetActive(true);
+            //timeText.text = GameLogic.instance.timeElapsed.ToString();
+
+            int approxTime = (int)GameLogic.instance.timeElapsed;
+            timeText.text = approxTime.ToString();
+
+            deathsText.text = GameLogic.instance.timesDied.ToString();
+            coinsText.text = GameLogic.instance.coinsGrabbed.ToString();
+        }
+    }
+
     public void ShowDeath() {
         deathText.SetActive(true);
         if (InputManager.GetKeyDown(1)) {

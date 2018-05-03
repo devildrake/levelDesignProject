@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ChasingFire : MonoBehaviour {
+public class ChasingFire : ResetableObject {
     // Use this for initialization
     Rigidbody2D rb;
     float currentSpeed;
@@ -17,28 +17,37 @@ public class ChasingFire : MonoBehaviour {
         MIN_Speed = 2.5f;
         MAX_Distance = 30.0f;
         rb.gravityScale = 0;
+        originalPos = transform.position;
 	}
 
     // Update is called once per frame
     void Update() {
         if (GameLogic.instance != null) {
+
+            if (!added) {
+                added = true;
+                GameLogic.instance.ResetableObjects.Add(this);
+            }
+
             if (GameLogic.instance.started) {
                 currentDistance = target.position.x - transform.position.x;
                 currentSpeed = Mathf.Clamp((currentDistance / MAX_Distance * MAX_Speed), MIN_Speed, MAX_Speed);
                 rb.velocity = new Vector2(currentSpeed, 0);
+            } else {
+                rb.velocity = new Vector2(0,0);
             }
         }
     }
 
     private void OnTriggerEnter2D(Collider2D collision) {
         if (collision.tag == "Player") {
-            collision.GetComponent<PlayerController>().Die();
+            GameLogic.instance.KillPlayer();
         }
     }
 
     private void OnTriggerStay2D(Collider2D collision) {
         if (collision.tag == "Player") {
-            collision.GetComponent<PlayerController>().Die();
+            GameLogic.instance.KillPlayer();
         }
     }
 }

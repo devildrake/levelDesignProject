@@ -14,13 +14,24 @@ public class AddListenerScript : MonoBehaviour {
 
     void Start() {
         myselfButton = GetComponent<Button>();
-
         switch (toDo) {
             case 0:
                 myselfButton.onClick.AddListener(() => GameLogic.instance.ToMainMenu());
                 break;
             case 1:
                 myselfButton.onClick.AddListener(() => GameLogic.instance.LoadScene(index));//(GameLogic.instance.GetCurrentLevelIndex()+1));
+                break;
+            case 2:
+                myselfButton.onClick.AddListener(() => GameLogic.instance.ResetScene());//(GameLogic.instance.GetCurrentLevelIndex()+1));
+                break;
+            case 3:
+                myselfButton.onClick.AddListener(() => GameLogic.instance.paused = false);
+                break;
+            case 4:
+                myselfButton.onClick.AddListener(() => GameLogic.instance.paused = true);
+                break;
+            case 5:
+                myselfButton.onClick.AddListener(() => GameLogic.instance.LoadScene(SceneManager.GetActiveScene().buildIndex+1));
                 break;
             default:
                 break;

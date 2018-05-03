@@ -6,16 +6,19 @@ public class PlayerController : MonoBehaviour {
     Rigidbody2D rb;
     public Vector2 maxSpeed;
     public Vector2 acceleration;
-    public bool godMode;
+    public float speedMultiplier;
     public float slowTimer;
     public float slowMultiplier;
     public Vector2 auxiliarSpeed;
+    bool added = false;
 	// Use this for initialization
 	void Start () {
         rb = GetComponent<Rigidbody2D>();
         maxSpeed = new Vector2(20.0f, 30.0f);
         acceleration = new Vector2(15,35.0f);
         slowTimer = 0;
+        speedMultiplier = 1;
+
 	}
 
     public void GetSlowed(float time) {
@@ -25,6 +28,13 @@ public class PlayerController : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
         if (GameLogic.instance != null) {
+
+            if (!added) {
+                GameLogic.instance.player = this;
+                GameLogic.instance.originalPlayerPos = transform.position;
+                added = true;
+            }
+
             if (GameLogic.instance.started) {
                 if (slowTimer > 0) {
                     if (auxiliarSpeed.x == 0 && auxiliarSpeed.y == 0) {
@@ -67,14 +77,14 @@ public class PlayerController : MonoBehaviour {
                     }
 
                     if (InputManager.rightButton) {
-                        finalVelocity.x += acceleration.x * Time.deltaTime;
+                        finalVelocity.x += speedMultiplier * acceleration.x * Time.deltaTime;
                     } else {
                         finalVelocity.x -= acceleration.x * Time.deltaTime;
                     }
 
                     if (rb != null) {
                         finalVelocity.y = Mathf.Clamp(finalVelocity.y, -maxSpeed.y, maxSpeed.y);
-                        finalVelocity.x = Mathf.Clamp(finalVelocity.x, 2, maxSpeed.x);
+                        finalVelocity.x = Mathf.Clamp(finalVelocity.x, 2, maxSpeed.x * speedMultiplier);
                         rb.velocity = finalVelocity;
                     }
                 }
@@ -87,10 +97,5 @@ public class PlayerController : MonoBehaviour {
         }
 	}
 
-    public void Die() {
-        if (!godMode) {
-            GameLogic.instance.deadPlayer = true;
-            gameObject.SetActive(false);
-        }
-    }
+
 }
